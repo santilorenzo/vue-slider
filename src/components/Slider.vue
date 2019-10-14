@@ -2,18 +2,26 @@
   <div>
     <!-- Nav Links -->
     <div ref="slider" class="navMenu" :style="[menuDirection, menuWidth]">
-      <a href="javascript:void(0)" class="closebtn" @click="closeMenu()">&times;</a>
-      <a v-for="link in links" :key="link.id" :href="link.url">{{ link.text }}</a>
+      <a href="javascript:void(0)" class="closebtn" @click="closeMenu()">
+        <slot name="closeIcon">
+          &times;
+        </slot>
+      </a>
+      <slot name="options">
+        <a v-for="link in links" :key="link.id" :href="link.url">{{ link.text }}</a>
+      </slot>
     </div>
     <!-- Hamburger Menu -->
-    <nav ref="menuIcon" class="navIcon" :style="iconDirection">
-      <a href="javascript:void(0)" @click="toggleMenu()" data-test-ref="navMenuLink">
-        <svg width="30" height="30">
-          <path d="M0,5 30,5" :stroke="styles['menu-icon-color']" stroke-width="5"/>
-          <path d="M0,14 30,14" :stroke="styles['menu-icon-color']" stroke-width="5"/>
-          <path d="M0,23 30,23" :stroke="styles['menu-icon-color']" stroke-width="5"/>
-        </svg>
-      </a>
+    <nav ref="menuIcon" class="navIcon" :style="iconDirection" v-if="burgerButtonVisible">
+      <slot name="menuIcon">
+        <a href="javascript:void(0)" @click="toggleMenu()" data-test-ref="navMenuLink">
+          <svg width="30" height="30">
+            <path d="M0,5 30,5" :stroke="styles['menu-icon-color']" stroke-width="5"/>
+            <path d="M0,14 30,14" :stroke="styles['menu-icon-color']" stroke-width="5"/>
+            <path d="M0,23 30,23" :stroke="styles['menu-icon-color']" stroke-width="5"/>
+          </svg>
+        </a>
+      </slot>
     </nav>
   </div>
 </template>
@@ -47,6 +55,16 @@ export default {
     links: {
       type: Array,
       required: true
+    },
+    burgerButtonVisible: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    open: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
@@ -55,6 +73,11 @@ export default {
       menuWidth: {
         'width': 0
       }
+    }
+  },
+  watch: {
+    open: function() {
+        this.toggleMenu();
     }
   },
   computed: {
