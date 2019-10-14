@@ -76,8 +76,8 @@ export default {
     }
   },
   watch: {
-    open: function() {
-        this.toggleMenu();
+    open: function () {
+      this.toggleMenu()
     }
   },
   computed: {

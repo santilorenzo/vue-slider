@@ -27,9 +27,8 @@ export default {
   components: {
     'slider': Slider
   },
-  data: function() {
-
-    return {
+  data: function () {
+    return {
       isOpen: false
     }
   },
