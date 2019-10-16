@@ -5,11 +5,7 @@
       format="overlay"
       direction="left"
       :opacity="0.15"
-      :links="[
-        {'id': 1, 'text': 'Link 1', 'url': 'https://github.com'},
-        {'id': 2, 'text': 'Link 2', 'url': 'https://github.com'},
-        {'id': 3, 'text': 'Link 3', 'url': 'https://github.com'}
-      ]"
+      :links="links"
       :burger-button-visible="false"
       :open="isOpen"
     >
@@ -29,7 +25,24 @@ export default {
   },
   data: function () {
     return {
-      isOpen: false
+      isOpen: false,
+      links: [
+        {
+          'id': 1,
+          'text': 'Link 1',
+          'url': 'https://github.com'
+        },
+        {
+          'id': 4,
+          'text': 'Link 3',
+          'url': 'https://github.com',
+          links: [
+            { 'id': 1, 'text': 'Link 1', 'url': 'https://github.com' },
+            { 'id': 2, 'text': 'Link 2', 'url': 'https://github.com' },
+            { 'id': 3, 'text': 'Link 3', 'url': 'https://github.com' }
+          ]
+        }
+      ]
     }
   },
   methods: {

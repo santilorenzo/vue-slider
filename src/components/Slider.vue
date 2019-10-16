@@ -1,14 +1,19 @@
 <template>
   <div>
     <!-- Nav Links -->
-    <div ref="slider" class="navMenu" :style="[menuDirection, menuWidth]">
+    <div ref="slider" class="navMenu" :style="[menuDirection, menuWidth, menuLeft, menuRight]">
       <a href="javascript:void(0)" class="closebtn" @click="closeMenu()">
         <slot name="closeIcon">
           &times;
         </slot>
       </a>
       <slot name="options">
-        <a v-for="link in links" :key="link.id" :href="link.url">{{ link.text }}</a>
+          <div v-for="link in links" :key="link.id" :class="{'parent': 'link.links'}">
+            <a :href="link.url" v-if="!link.links || link.links.length === 0">{{ link.text }}</a>
+            <div v-for="link in link.links" :key="link.id" class="sublink">
+                <a :href="link.url">{{ link.text }}</a>
+            </div>
+          </div>
       </slot>
     </div>
     <!-- Hamburger Menu -->
@@ -72,6 +77,12 @@ export default {
       styles: styles,
       menuWidth: {
         'width': 0
+      },
+      menuLeft: {
+        'left': 'auto'
+      },
+      menuRight: {
+        'right': 'auto'
       }
     }
   },
@@ -81,6 +92,9 @@ export default {
     }
   },
   computed: {
+    menuWidthSize () {
+      return this.format === 'full' ? window.innerWidth : this.width
+    },
     menuDirection () {
       return this.direction === 'right' ? { 'right': 0 } : { 'left': 0 }
     },
@@ -91,6 +105,16 @@ export default {
       return document.getElementById('app')
     }
   },
+
+  mounted () {
+    this.menuWidth.width = this.menuWidthSize + 'px'
+    if (this.direction === 'left') {
+      this.menuLeft.left = this.menuWidthSize * -1 + 'px'
+    } else {
+      this.menuRight.right = this.menuWidthSize * -1 + 'px'
+    }
+  },
+
   methods: {
     openMenu () {
       if (this.opacity) {
@@ -101,11 +125,19 @@ export default {
     setFormat () {
       const width = this.width.toString() + 'px'
       if (this.format === 'overlay') {
-        this.menuWidth = { 'width': width }
+        if (this.direction === 'left') {
+          this.menuLeft.left = 0
+        } else if (this.direction === 'right') {
+          this.menuRight.right = 0
+        }
       } else if (this.format === 'full') {
-        this.menuWidth = { 'width': '100%' }
+        if (this.direction === 'left') {
+          this.menuLeft.left = 0
+        } else if (this.direction === 'right') {
+          this.menuRight.right = 0
+        }
       } else {
-        this.menuWidth = { 'width': width }
+        this.menuLeft.left = 0
         if (this.app) {
           if (this.direction === 'right') {
             this.app.style.marginRight = width
@@ -120,7 +152,11 @@ export default {
       }
     },
     closeMenu () {
-      this.menuWidth = { 'width': 0 }
+      if (this.direction === 'left') {
+        this.menuLeft.left = (this.menuWidthSize * -1) + 'px'
+      } else if (this.direction === 'right') {
+        this.menuRight.right = (this.menuWidthSize * -1) + 'px'
+      }
       if (this.app) {
         this.app.style.marginLeft = '0'
         this.app.style.marginRight = '0'
@@ -130,10 +166,10 @@ export default {
       }
     },
     toggleMenu () {
-      if (this.menuWidth.width === 0) {
-        this.openMenu()
-      } else {
+      if (this.menuLeft.left === 0) {
         this.closeMenu()
+      } else {
+        this.openMenu()
       }
     }
   }
@@ -174,6 +210,16 @@ export default {
         color: $menu-text-hover;
       }
     }
+    .parent {
+
+    }
+    .sublink {
+        margin-left: 20px;
+        line-height: 0.8;
+        a {
+            font-size: 20px;
+        }
+  }
     .closebtn {
       position: absolute;
       top: 0;
